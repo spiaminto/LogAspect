@@ -31,13 +31,13 @@ public class LogTraceAspect {
 
             logTrace.end(status);
             return result;
-        } catch (Exception e) {
+        } catch (Throwable t) {
             if (status == null) {
                 log.warn("[execute()] TraceStatus is null");
                 status = new TraceStatus(new TraceId(), message);
             }
-            logTrace.exception(status, e, params);
-            throw e; //예외를 처리하진 않음
+            logTrace.exception(status, t, params);
+            throw t; //예외를 처리하진 않음
         }
     }
 

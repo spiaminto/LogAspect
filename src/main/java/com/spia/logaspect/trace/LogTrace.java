@@ -19,8 +19,8 @@ public interface LogTrace {
     /**
      * 예외 발생시 로깅
      * @param status
-     * @param e
+     * @param t
      * @param params
      */
-    void exception(@NonNull TraceStatus status, Exception e, @NonNull Object[] params);
+    void exception(@NonNull TraceStatus status, Throwable t, @NonNull Object[] params);
 }

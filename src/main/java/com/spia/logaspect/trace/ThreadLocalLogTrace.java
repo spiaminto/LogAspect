@@ -4,6 +4,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 
 //@Component
 @Slf4j
@@ -42,18 +45,18 @@ public class ThreadLocalLogTrace implements LogTrace {
     }
 
     @Override
-    public void exception(@NonNull TraceStatus status, Exception e, @NonNull Object[] params) {
-        complete(status, e, params);
+    public void exception(@NonNull TraceStatus status, Throwable t, @NonNull Object[] params) {
+        complete(status, t, params);
     }
 
     /**
      * TraceStatus 를 받아 <- 방향의 로그를 찍는다.
      * 예외 발생 시 해당 메서드에 전달된 파라미터를 같이 출력.
      */
-    private void complete(TraceStatus status, Exception e, Object[] params) {
+    private void complete(TraceStatus status, Throwable throwable, Object[] params) {
         TraceId traceId = status.getTraceId();
         if (!completeEnabled) return;
-        if (e == null) {
+        if (throwable == null) {
 //             완료 로그 출력 여부가 true 이면 완료 로그만 출력
             log.info("[{}] {}{}", traceId.getId(), addSpace(COMPLETE_PREFIX, traceId.getLevel()), status.getMessage());
         } else {
@@ -62,7 +65,11 @@ public class ThreadLocalLogTrace implements LogTrace {
             for (Object param : params) {
                 sb.append(param).append(",\n");
             }
-            log.error("[{}] {}{} \n exception = \n{}\n from = \n{}\n params = \n{}", traceId.getId(), addSpace(EX_PREFIX, traceId.getLevel()), status.getMessage(), e, e.getStackTrace()[0], sb);
+            String stackTrace = Arrays.stream(throwable.getStackTrace())
+                    .limit(10)
+                    .map(StackTraceElement::toString)
+                    .collect(Collectors.joining("\n"));
+            log.error("[{}] {}{} \n exception = \n{}\n from = \n{}\n params = \n{}", traceId.getId(), addSpace(EX_PREFIX, traceId.getLevel()), status.getMessage(), throwable, stackTrace, sb);
         }
         if (traceId.isFirstLevel()) {
             log.info("[{}] {}", traceId.getId(), COMPLETE_MESSAGE);

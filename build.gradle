@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.spia'
-version = '1.0.4'
+version = '1.0.5'
 description = 'LogAspect_Lib'
 
 // 자바 툴체인 17 -> 11
@@ -26,6 +26,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.13'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.17' // 테스트용
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -47,7 +48,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.spia.logaspect'
             artifactId = 'log-aspect'
-            version= '1.0.4'
+            version= '1.0.5'
 
             from components.java
         }
