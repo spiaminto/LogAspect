@@ -1,13 +1,15 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.7.13'  // 3.5.4에서 2.7.13으로 다운그레이드 (Java 11 호환)
+    id 'org.springframework.boot' version '2.7.13' apply false  // 3.5.4에서 2.7.13으로 다운그레이드 (Java 11 호환)
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'  // 1.1.7에서 1.0.15.RELEASE로 다운그레이드 (Java 11 호환)
+    id 'maven-publish' // for jitpack
 }
 
 group = 'com.spia'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.2'
 description = 'LogAspect_Lib'
 
+// 자바 툴체인 17 -> 11
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
@@ -20,13 +22,34 @@ dependencies {
     implementation 'org.springframework:spring-context:5.3.30'
     implementation 'org.aspectj:aspectjweaver:1.9.9.1'
     implementation 'org.slf4j:slf4j-api:2.0.13'
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly 'org.projectlombok:lombok:1.18.30' // 롬복 최소버전
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.13'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// 라이브러리용 의존성 매니징 변경
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
+
+// jitpack 배포설정 시작 (maven plugin, yml 추가 필요)
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.spia.logaspect'
+            artifactId = 'log-aspect'
+            version= '0.0.2'
+
+            from components.java
+        }
+    }
 }
