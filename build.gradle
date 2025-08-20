@@ -1,18 +1,15 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.4'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '2.7.13'  // 3.5.4에서 2.7.13으로 다운그레이드 (Java 11 호환)
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'  // 1.1.7에서 1.0.15.RELEASE로 다운그레이드 (Java 11 호환)
 }
 
 group = 'com.spia'
 version = '0.0.1-SNAPSHOT'
 description = 'LogAspect_Lib'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
+sourceCompatibility = '11'
+targetCompatibility = '11'
 
 repositories {
     mavenCentral()
@@ -26,7 +23,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.13'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
