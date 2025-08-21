@@ -2,6 +2,7 @@ package com.spia.logaspect.trace;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 
 //@Component
+
 @Slf4j
 public class ThreadLocalLogTrace implements LogTrace {
 
@@ -18,7 +20,8 @@ public class ThreadLocalLogTrace implements LogTrace {
     private static final String COMPLETE_MESSAGE = "=== RES COMPLETE===";
     private static final String EX_PREFIX = "X";
 
-    private final boolean completeEnabled = true; // 완료 로그 출력 여부 프로퍼티에서 가져옴
+    @Value("${log.trace.completeEnabled:true}")
+    private boolean completeEnabled = true; // 완료 로그 출력 여부 프로퍼티에서 가져옴
 
     private ThreadLocal<TraceId> traceIdHolder = new ThreadLocal<>(); // 동시성 문제해결
 
@@ -55,12 +58,8 @@ public class ThreadLocalLogTrace implements LogTrace {
      */
     private void complete(TraceStatus status, Throwable throwable, Object[] params) {
         TraceId traceId = status.getTraceId();
-        if (!completeEnabled) return;
-        if (throwable == null) {
-//             완료 로그 출력 여부가 true 이면 완료 로그만 출력
-            log.info("[{}] {}{}", traceId.getId(), addSpace(COMPLETE_PREFIX, traceId.getLevel()), status.getMessage());
-        } else {
-            // exception 발생 시 파라미터를 같이 출력
+        if (throwable != null) {
+            // exception 발생 시  파라미터를 같이 출력
             StringBuilder sb = new StringBuilder();
             for (Object param : params) {
                 sb.append(param).append(",\n");
@@ -70,7 +69,10 @@ public class ThreadLocalLogTrace implements LogTrace {
                     .map(StackTraceElement::toString)
                     .collect(Collectors.joining("\n"));
             log.error("[{}] {}{} \n exception = \n{}\n from = \n{}\n params = \n{}", traceId.getId(), addSpace(EX_PREFIX, traceId.getLevel()), status.getMessage(), throwable, stackTrace, sb);
+        } else if (completeEnabled) {
+            log.info("[{}] {}{}", traceId.getId(), addSpace(COMPLETE_PREFIX, traceId.getLevel()), status.getMessage());
         }
+
         if (traceId.isFirstLevel()) {
             log.info("[{}] {}", traceId.getId(), COMPLETE_MESSAGE);
         }

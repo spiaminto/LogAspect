@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "log.trace.completeEnabled",
+      "type": "java.lang.boolean",
+      "defaultValue": true,
+      "description": "완료 로그 (<- 방향) 출력 여부"
+    }
+  ],
+  "hints": []
+}
