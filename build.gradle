@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.spia'
-version = '1.0.5'
+version = '1.0.6'
 description = 'LogAspect_Lib'
 
 // 자바 툴체인 17 -> 11
@@ -48,7 +48,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.spia.logaspect'
             artifactId = 'log-aspect'
-            version= '1.0.5'
+            version= '1.0.6'
 
             from components.java
         }
